@@ -157,7 +157,8 @@ extension ZegoLivePageStateGiftExtension on ZegoLivePageState {
   }
 
   void onGiftReceived() {
-    final receivedGift = ZegoGiftManager().service.recvNotifier.value ?? ZegoGiftProtocolItem.empty();
+    final receivedGift = ZegoGiftManager().service.recvNotifier.value ??
+        ZegoGiftProtocolItem.empty();
     final giftData = queryGiftInItemList(receivedGift.name);
     if (null == giftData) {
       debugPrint('not ${receivedGift.name} exist');

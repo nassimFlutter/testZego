@@ -32,7 +32,8 @@ class ExpressService {
   ZegoMixerTask? currentMixerTask;
   ValueNotifier<Widget?> mixerStreamNotifier = ValueNotifier(null);
   ZegoScenario currentScenario = ZegoScenario.Default;
-  ValueNotifier<ZegoPublisherState> publisherState = ValueNotifier<ZegoPublisherState>(ZegoPublisherState.NoPublish);
+  ValueNotifier<ZegoPublisherState> publisherState =
+      ValueNotifier<ZegoPublisherState>(ZegoPublisherState.NoPublish);
 
   void clearRoomData() {
     currentScenario = ZegoScenario.Default;
@@ -54,7 +55,8 @@ class ExpressService {
     ZegoScenario scenario = ZegoScenario.Default,
   }) async {
     initEventHandle();
-    ZegoExpressEngine.setEngineConfig(ZegoEngineConfig(advancedConfig: {'vcap_external_mem_class': '1'}));
+    ZegoExpressEngine.setEngineConfig(
+        ZegoEngineConfig(advancedConfig: {'vcap_external_mem_class': '1'}));
     final profile = ZegoEngineProfile(appID, scenario, appSign: appSign);
     if (Platform.isIOS) {
       profile.enablePlatformView = true;
@@ -100,7 +102,7 @@ class ExpressService {
     final joinRoomResult = await ZegoExpressEngine.instance.loginRoom(
       roomID,
       ZegoUser(currentUser!.userID, currentUser!.userName),
-      config: ZegoRoomConfig(0, true, token ?? ''),
+      config: ZegoRoomConfig(8, true, token ?? ''),
     );
     if (joinRoomResult.errorCode == 0) {
       currentRoomID = roomID;
@@ -109,7 +111,8 @@ class ExpressService {
   }
 
   Future<ZegoRoomLogoutResult> logoutRoom([String roomID = '']) async {
-    final leaveResult = await ZegoExpressEngine.instance.logoutRoom(roomID.isNotEmpty ? roomID : currentRoomID);
+    final leaveResult = await ZegoExpressEngine.instance
+        .logoutRoom(roomID.isNotEmpty ? roomID : currentRoomID);
     if (leaveResult.errorCode == 0) {
       clearRoomData();
     }
@@ -133,7 +136,9 @@ class ExpressService {
 
   void enableVideoMirroring(bool isVideoMirror) {
     ZegoExpressEngine.instance.setVideoMirrorMode(
-      isVideoMirror ? ZegoVideoMirrorMode.BothMirror : ZegoVideoMirrorMode.NoMirror,
+      isVideoMirror
+          ? ZegoVideoMirrorMode.BothMirror
+          : ZegoVideoMirrorMode.NoMirror,
     );
   }
 
@@ -165,7 +170,8 @@ class ExpressService {
   }
 
   Future<void> startPlayingStream(String streamID,
-      {ZegoViewMode viewMode = ZegoViewMode.AspectFill, ZegoPlayerConfig? config}) async {
+      {ZegoViewMode viewMode = ZegoViewMode.AspectFill,
+      ZegoPlayerConfig? config}) async {
     final userID = streamMap[streamID];
     final userInfo = getUser(userID ?? '');
     if (currentScenario == ZegoScenario.HighQualityChatroom ||
@@ -174,7 +180,8 @@ class ExpressService {
         currentScenario == ZegoScenario.StandardVoiceCall ||
         currentScenario == ZegoScenario.HighQualityVideoCall) {
       if (config == null) {
-        config = ZegoPlayerConfig.defaultConfig()..resourceMode = ZegoStreamResourceMode.OnlyRTC;
+        config = ZegoPlayerConfig.defaultConfig()
+          ..resourceMode = ZegoStreamResourceMode.OnlyRTC;
       } else {
         config.resourceMode = ZegoStreamResourceMode.OnlyRTC;
       }
@@ -197,16 +204,25 @@ class ExpressService {
     }
   }
 
-  final roomUserListUpdateStreamCtrl = StreamController<ZegoRoomUserListUpdateEvent>.broadcast();
-  final streamListUpdateStreamCtrl = StreamController<ZegoRoomStreamListUpdateEvent>.broadcast();
-  final roomStreamExtraInfoStreamCtrl = StreamController<ZegoRoomStreamExtraInfoEvent>.broadcast();
-  final roomStateChangedStreamCtrl = StreamController<ZegoRoomStateEvent>.broadcast();
-  final roomExtraInfoUpdateCtrl = StreamController<ZegoRoomExtraInfoEvent>.broadcast();
-  final recvAudioFirstFrameCtrl = StreamController<ZegoRecvAudioFirstFrameEvent>.broadcast();
-  final recvVideoFirstFrameCtrl = StreamController<ZegoRecvVideoFirstFrameEvent>.broadcast();
+  final roomUserListUpdateStreamCtrl =
+      StreamController<ZegoRoomUserListUpdateEvent>.broadcast();
+  final streamListUpdateStreamCtrl =
+      StreamController<ZegoRoomStreamListUpdateEvent>.broadcast();
+  final roomStreamExtraInfoStreamCtrl =
+      StreamController<ZegoRoomStreamExtraInfoEvent>.broadcast();
+  final roomStateChangedStreamCtrl =
+      StreamController<ZegoRoomStateEvent>.broadcast();
+  final roomExtraInfoUpdateCtrl =
+      StreamController<ZegoRoomExtraInfoEvent>.broadcast();
+  final recvAudioFirstFrameCtrl =
+      StreamController<ZegoRecvAudioFirstFrameEvent>.broadcast();
+  final recvVideoFirstFrameCtrl =
+      StreamController<ZegoRecvVideoFirstFrameEvent>.broadcast();
   final recvSEICtrl = StreamController<ZegoRecvSEIEvent>.broadcast();
-  final mixerSoundLevelUpdateCtrl = StreamController<ZegoMixerSoundLevelUpdateEvent>.broadcast();
-  final onMediaPlayerStateUpdateCtrl = StreamController<ZegoPlayerStateChangeEvent>.broadcast();
+  final mixerSoundLevelUpdateCtrl =
+      StreamController<ZegoMixerSoundLevelUpdateEvent>.broadcast();
+  final onMediaPlayerStateUpdateCtrl =
+      StreamController<ZegoPlayerStateChangeEvent>.broadcast();
 
   void uninitEventHandle() {
     ZegoExpressEngine.onRoomStreamUpdate = null;
@@ -228,17 +244,26 @@ class ExpressService {
   void initEventHandle() {
     ZegoExpressEngine.onRoomStreamUpdate = ExpressService().onRoomStreamUpdate;
     ZegoExpressEngine.onRoomUserUpdate = ExpressService().onRoomUserUpdate;
-    ZegoExpressEngine.onRoomStreamExtraInfoUpdate = ExpressService().onRoomStreamExtraInfoUpdate;
+    ZegoExpressEngine.onRoomStreamExtraInfoUpdate =
+        ExpressService().onRoomStreamExtraInfoUpdate;
     ZegoExpressEngine.onRoomStateChanged = ExpressService().onRoomStateChanged;
-    ZegoExpressEngine.onCapturedSoundLevelUpdate = ExpressService().onCapturedSoundLevelUpdate;
-    ZegoExpressEngine.onRemoteSoundLevelUpdate = ExpressService().onRemoteSoundLevelUpdate;
-    ZegoExpressEngine.onMixerSoundLevelUpdate = ExpressService().onMixerSoundLevelUpdate;
-    ZegoExpressEngine.onPlayerRecvAudioFirstFrame = ExpressService().onPlayerRecvAudioFirstFrame;
-    ZegoExpressEngine.onPlayerRecvVideoFirstFrame = ExpressService().onPlayerRecvVideoFirstFrame;
+    ZegoExpressEngine.onCapturedSoundLevelUpdate =
+        ExpressService().onCapturedSoundLevelUpdate;
+    ZegoExpressEngine.onRemoteSoundLevelUpdate =
+        ExpressService().onRemoteSoundLevelUpdate;
+    ZegoExpressEngine.onMixerSoundLevelUpdate =
+        ExpressService().onMixerSoundLevelUpdate;
+    ZegoExpressEngine.onPlayerRecvAudioFirstFrame =
+        ExpressService().onPlayerRecvAudioFirstFrame;
+    ZegoExpressEngine.onPlayerRecvVideoFirstFrame =
+        ExpressService().onPlayerRecvVideoFirstFrame;
     ZegoExpressEngine.onPlayerRecvSEI = ExpressService().onPlayerRecvSEI;
-    ZegoExpressEngine.onRoomExtraInfoUpdate = ExpressService().onRoomExtraInfoUpdate;
-    ZegoExpressEngine.onPublisherStateUpdate = ExpressService().onPublisherStateUpdate;
-    ZegoExpressEngine.onMediaPlayerStateUpdate = ExpressService().onMediaPlayerStateUpdate;
+    ZegoExpressEngine.onRoomExtraInfoUpdate =
+        ExpressService().onRoomExtraInfoUpdate;
+    ZegoExpressEngine.onPublisherStateUpdate =
+        ExpressService().onPublisherStateUpdate;
+    ZegoExpressEngine.onMediaPlayerStateUpdate =
+        ExpressService().onMediaPlayerStateUpdate;
   }
 
   void onRoomUserUpdate(
@@ -250,7 +275,8 @@ class ExpressService {
       for (final user in userList) {
         final userInfo = getUser(user.userID);
         if (userInfo == null) {
-          userInfoList.add(ZegoSDKUser(userID: user.userID, userName: user.userName));
+          userInfoList
+              .add(ZegoSDKUser(userID: user.userID, userName: user.userName));
         } else {
           userInfo
             ..userID = user.userID
@@ -264,11 +290,13 @@ class ExpressService {
         });
       }
     }
-    roomUserListUpdateStreamCtrl.add(ZegoRoomUserListUpdateEvent(roomID, updateType, userList));
+    roomUserListUpdateStreamCtrl
+        .add(ZegoRoomUserListUpdateEvent(roomID, updateType, userList));
   }
 
-  void onRoomStateChanged(
-      String roomID, ZegoRoomStateChangedReason reason, int errorCode, Map<String, dynamic> extendedData) {
-    roomStateChangedStreamCtrl.add(ZegoRoomStateEvent(roomID, reason, errorCode, extendedData));
+  void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason,
+      int errorCode, Map<String, dynamic> extendedData) {
+    roomStateChangedStreamCtrl
+        .add(ZegoRoomStateEvent(roomID, reason, errorCode, extendedData));
   }
 }

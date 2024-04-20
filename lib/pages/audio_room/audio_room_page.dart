@@ -47,7 +47,6 @@ class _AudioRoomPageState extends State<AudioRoomPage> {
     ]);
 
     loginRoom();
-
     ZegoGiftManager().cache.cacheAllFiles(giftItemList);
     ZegoGiftManager().service.recvNotifier.addListener(onGiftReceived);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

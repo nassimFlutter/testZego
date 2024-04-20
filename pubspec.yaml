@@ -20,6 +20,8 @@ dependencies:
   faker: ^2.1.0
   transparent_image: ^2.0.1
   svgaplayer_flutter: ^2.2.0
+  http: ^0.13.6
+  uuid: ^4.2.2
 
 dev_dependencies:
   flutter_test:
